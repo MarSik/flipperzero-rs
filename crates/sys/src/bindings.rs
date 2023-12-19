@@ -110,7 +110,7 @@ impl<T> ::core::fmt::Debug for __IncompleteArrayField<T> {
         fmt.write_str("__IncompleteArrayField")
     }
 }
-pub const API_VERSION: u32 = 3014656;
+pub const API_VERSION: u32 = 3211265;
 pub type wint_t = core::ffi::c_int;
 pub type __uint_least8_t = core::ffi::c_uchar;
 pub type __uint_least16_t = core::ffi::c_ushort;
@@ -1602,6 +1602,9 @@ extern "C" {
 }
 extern "C" {
     pub fn atoi(__nptr: *const core::ffi::c_char) -> core::ffi::c_int;
+}
+extern "C" {
+    pub fn calloc(arg1: core::ffi::c_uint, arg2: core::ffi::c_uint) -> *mut core::ffi::c_void;
 }
 extern "C" {
     pub fn free(arg1: *mut core::ffi::c_void);
@@ -10003,6 +10006,15 @@ extern "C" {
     pub fn furi_hal_nfc_iso15693_listener_tx_sof() -> FuriHalNfcError;
 }
 extern "C" {
+    #[doc = "Set FeliCa collision resolution parameters in listener mode.\n\nConfigures the NFC hardware for automatic collision resolution.\n\nReturns:\n\n* NfcErrorNone on success, any other error code on failure.\n\n# Arguments\n\n* `idm` - [Direction: In] pointer to a byte array containing the IDm.\n* `idm_len` - [Direction: In] IDm length in bytes.\n* `pmm` - [Direction: In] pointer to a byte array containing the PMm.\n* `pmm_len` - [Direction: In] PMm length in bytes.\n\n"]
+    pub fn furi_hal_nfc_felica_listener_set_sensf_res_data(
+        idm: *const u8,
+        idm_len: u8,
+        pmm: *const u8,
+        pmm_len: u8,
+    ) -> FuriHalNfcError;
+}
+extern "C" {
     #[doc = "Transfer execution to address\n\n# Arguments\n\n* `address` - [Direction: In] pointer to new executable\n\n"]
     pub fn furi_hal_switch(address: *mut core::ffi::c_void);
 }
@@ -11780,7 +11792,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = "Get glyph width\n\nReturns:\n\n* width in pixels\n\n# Arguments\n\n* `canvas` - Canvas instance\n* `symbol` - [Direction: In] character\n\n"]
-    pub fn canvas_glyph_width(canvas: *mut Canvas, symbol: core::ffi::c_char) -> u8;
+    pub fn canvas_glyph_width(canvas: *mut Canvas, symbol: u16) -> u8;
 }
 extern "C" {
     #[doc = "Draw bitmap picture at position defined by x,y.\n\n# Arguments\n\n* `canvas` - Canvas instance\n* `x` - x coordinate\n* `y` - y coordinate\n* `width` - width of bitmap\n* `height` - height of bitmap\n* `compressed_bitmap_data` - compressed bitmap data\n\n"]
@@ -18417,45 +18429,6 @@ fn bindgen_test_layout_usb_cdc_line_coding() {
         )
     );
 }
-extern "C" {
-    #[doc = "This function calculates the SHA-1 checksum of a buffer.\n\nThe function allocates the context, performs the calculation, and frees the context.\nThe SHA-1 result is calculated as output = SHA-1(input buffer).\n\n**Warning!**\n\n* SHA-1 is considered a weak message digest and its use constitutes a security risk. We recommend considering stronger message digests instead.\n\nReturns:\n\n* \\c 0 on success.\n* A negative error code on failure.\n\n# Arguments\n\n* `input` - The buffer holding the input data. This must be a readable buffer of length \\p ilen Bytes.\n* `ilen` - The length of the input data \\p input in Bytes.\n* `output` - The SHA-1 checksum result. This must be a writable buffer of length \\c 20 Bytes.\n\n"]
-    pub fn mbedtls_sha1(
-        input: *const core::ffi::c_uchar,
-        ilen: usize,
-        output: *mut core::ffi::c_uchar,
-    ) -> core::ffi::c_int;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct uECC_Curve_t {
-    _unused: [u8; 0],
-}
-pub type uECC_Curve = *const uECC_Curve_t;
-extern "C" {
-    pub fn uECC_secp256r1() -> uECC_Curve;
-}
-pub type uECC_RNG_Function = ::core::option::Option<
-    unsafe extern "C" fn(dest: *mut u8, size: core::ffi::c_uint) -> core::ffi::c_int,
->;
-extern "C" {
-    pub fn uECC_set_rng(rng_function: uECC_RNG_Function);
-}
-extern "C" {
-    pub fn uECC_compute_public_key(
-        private_key: *const u8,
-        public_key: *mut u8,
-        curve: uECC_Curve,
-    ) -> core::ffi::c_int;
-}
-extern "C" {
-    pub fn uECC_sign(
-        private_key: *const u8,
-        message_hash: *const u8,
-        hash_size: core::ffi::c_uint,
-        signature: *mut u8,
-        curve: uECC_Curve,
-    ) -> core::ffi::c_int;
-}
 pub type pb_type_t = uint_least8_t;
 pub type pb_size_t = uint_least16_t;
 pub type pb_byte_t = uint_least8_t;
@@ -19680,6 +19653,16 @@ extern "C" {
         uid_len: u8,
         atqa: *mut u8,
         sak: u8,
+    ) -> NfcError;
+}
+extern "C" {
+    #[doc = "Set FeliCa collision resolution parameters in listener mode.\n\nConfigures the NFC hardware for automatic collision resolution.\n\nReturns:\n\n* NfcErrorNone on success, any other error code on failure.\n\n# Arguments\n\n* `instance` - [Direction: Out] pointer to the instance to be configured.\n* `idm` - [Direction: In] pointer to a byte array containing the IDm.\n* `idm_len` - [Direction: In] IDm length in bytes.\n* `pmm` - [Direction: In] pointer to a byte array containing the PMm.\n* `pmm_len` - [Direction: In] PMm length in bytes.\n\n"]
+    pub fn nfc_felica_listener_set_sensf_res_data(
+        instance: *mut Nfc,
+        idm: *const u8,
+        idm_len: u8,
+        pmm: *const u8,
+        pmm_len: u8,
     ) -> NfcError;
 }
 extern "C" {
@@ -21490,8 +21473,27 @@ extern "C" {
     ) -> MfClassicError;
 }
 extern "C" {
+    #[doc = "Collect tag nonce during nested authentication.\n\nMust ONLY be used inside the callback function.\nStarts nested authentication procedure and collects tag nonce.\n\nReturns:\n\n* MfClassicErrorNone on success, an error code on failure.\n\n# Arguments\n\n* `out]` - instance pointer to the instance to be used in the transaction.\n* `block_num` - [Direction: In] block number for authentication.\n* `key_type` - [Direction: In] key type to be used for authentication.\n* `nt` - [Direction: In, Out] pointer to the MfClassicNt structure to be filled with nonce data.\n\n"]
+    pub fn mf_classic_poller_get_nt_nested(
+        instance: *mut MfClassicPoller,
+        block_num: u8,
+        key_type: MfClassicKeyType,
+        nt: *mut MfClassicNt,
+    ) -> MfClassicError;
+}
+extern "C" {
     #[doc = "Perform authentication.\n\nMust ONLY be used inside the callback function.\nPerform authentication as specified in Mf Classic protocol. Initialize crypto state for futher communication with the tag.\n\nReturns:\n\n* MfClassicErrorNone on success, an error code on failure.\n\n# Arguments\n\n* `out]` - instance pointer to the instance to be used in the transaction.\n* `block_num` - [Direction: In] block number for authentication.\n* `key` - [Direction: In] key to be used for authentication.\n* `key_type` - [Direction: In] key type to be used for authentication.\n* `data` - [Direction: In, Out] pointer to MfClassicAuthContext structure to be filled with authentication data.\n\n"]
     pub fn mf_classic_poller_auth(
+        instance: *mut MfClassicPoller,
+        block_num: u8,
+        key: *mut MfClassicKey,
+        key_type: MfClassicKeyType,
+        data: *mut MfClassicAuthContext,
+    ) -> MfClassicError;
+}
+extern "C" {
+    #[doc = "Perform nested authentication.\n\nMust ONLY be used inside the callback function.\nPerform nested  authentication as specified in Mf Classic protocol.\n\nReturns:\n\n* MfClassicErrorNone on success, an error code on failure.\n\n# Arguments\n\n* `out]` - instance pointer to the instance to be used in the transaction.\n* `block_num` - [Direction: In] block number for authentication.\n* `key` - [Direction: In] key to be used for authentication.\n* `key_type` - [Direction: In] key type to be used for authentication.\n* `data` - [Direction: In, Out] pointer to MfClassicAuthContext structure to be filled with authentication data.\n\n"]
+    pub fn mf_classic_poller_auth_nested(
         instance: *mut MfClassicPoller,
         block_num: u8,
         key: *mut MfClassicKey,
@@ -24470,6 +24472,7 @@ pub const St25tbError_St25tbErrorCommunication: St25tbError = 4;
 pub const St25tbError_St25tbErrorFieldOff: St25tbError = 5;
 pub const St25tbError_St25tbErrorWrongCrc: St25tbError = 6;
 pub const St25tbError_St25tbErrorTimeout: St25tbError = 7;
+pub const St25tbError_St25tbErrorWriteFailed: St25tbError = 8;
 pub type St25tbError = core::ffi::c_uchar;
 pub const St25tbType_St25tbType512At: St25tbType = 0;
 pub const St25tbType_St25tbType512Ac: St25tbType = 1;
@@ -24486,7 +24489,6 @@ pub struct St25tbData {
     pub type_: St25tbType,
     pub blocks: [u32; 128usize],
     pub system_otp_block: u32,
-    pub chip_id: u8,
 }
 #[test]
 fn bindgen_test_layout_St25tbData() {
@@ -24494,7 +24496,7 @@ fn bindgen_test_layout_St25tbData() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::core::mem::size_of::<St25tbData>(),
-        532usize,
+        528usize,
         concat!("Size of: ", stringify!(St25tbData))
     );
     assert_eq!(
@@ -24542,16 +24544,6 @@ fn bindgen_test_layout_St25tbData() {
             stringify!(system_otp_block)
         )
     );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).chip_id) as usize - ptr as usize },
-        528usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(St25tbData),
-            "::",
-            stringify!(chip_id)
-        )
-    );
 }
 extern "C" {
     pub fn st25tb_alloc() -> *mut St25tbData;
@@ -24595,6 +24587,9 @@ extern "C" {
 extern "C" {
     pub fn st25tb_get_base_data(data: *const St25tbData) -> *mut St25tbData;
 }
+extern "C" {
+    pub fn st25tb_get_type_from_uid(uid: *const u8) -> St25tbType;
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct St25tbPoller {
@@ -24609,13 +24604,11 @@ extern "C" {
     ) -> St25tbError;
 }
 extern "C" {
-    pub fn st25tb_poller_initiate(instance: *mut St25tbPoller, chip_id: *mut u8) -> St25tbError;
+    pub fn st25tb_poller_initiate(instance: *mut St25tbPoller, chip_id_ptr: *mut u8)
+        -> St25tbError;
 }
 extern "C" {
-    pub fn st25tb_poller_activate(
-        instance: *mut St25tbPoller,
-        data: *mut St25tbData,
-    ) -> St25tbError;
+    pub fn st25tb_poller_select(instance: *mut St25tbPoller, chip_id_ptr: *mut u8) -> St25tbError;
 }
 extern "C" {
     pub fn st25tb_poller_get_uid(instance: *mut St25tbPoller, uid: *mut u8) -> St25tbError;
@@ -24628,7 +24621,30 @@ extern "C" {
     ) -> St25tbError;
 }
 extern "C" {
+    pub fn st25tb_poller_write_block(
+        instance: *mut St25tbPoller,
+        block: u32,
+        block_number: u8,
+    ) -> St25tbError;
+}
+extern "C" {
     pub fn st25tb_poller_halt(instance: *mut St25tbPoller) -> St25tbError;
+}
+extern "C" {
+    pub fn st25tb_poller_sync_read_block(
+        nfc: *mut Nfc,
+        block_num: u8,
+        block: *mut u32,
+    ) -> St25tbError;
+}
+extern "C" {
+    pub fn st25tb_poller_sync_write_block(nfc: *mut Nfc, block_num: u8, block: u32) -> St25tbError;
+}
+extern "C" {
+    pub fn st25tb_poller_sync_detect_type(nfc: *mut Nfc, type_: *mut St25tbType) -> St25tbError;
+}
+extern "C" {
+    pub fn st25tb_poller_sync_read(nfc: *mut Nfc, data: *mut St25tbData) -> St25tbError;
 }
 extern "C" {
     pub fn maxim_crc8(data: *const u8, data_size: u8, crc_init: u8) -> u8;
@@ -27420,81 +27436,6 @@ extern "C" {
     pub fn manchester_encoder_finish(state: *mut ManchesterEncoderState)
         -> ManchesterEncoderResult;
 }
-#[doc = "MD5 context structure\n\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct md5_context {
-    #[doc = "number of bytes processed\n\n"]
-    pub total: [u32; 2usize],
-    #[doc = "intermediate digest state\n\n"]
-    pub state: [u32; 4usize],
-    #[doc = "data block being processed\n\n"]
-    pub buffer: [core::ffi::c_uchar; 64usize],
-}
-#[test]
-fn bindgen_test_layout_md5_context() {
-    const UNINIT: ::core::mem::MaybeUninit<md5_context> = ::core::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::core::mem::size_of::<md5_context>(),
-        88usize,
-        concat!("Size of: ", stringify!(md5_context))
-    );
-    assert_eq!(
-        ::core::mem::align_of::<md5_context>(),
-        4usize,
-        concat!("Alignment of ", stringify!(md5_context))
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).total) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(md5_context),
-            "::",
-            stringify!(total)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(md5_context),
-            "::",
-            stringify!(state)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).buffer) as usize - ptr as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(md5_context),
-            "::",
-            stringify!(buffer)
-        )
-    );
-}
-extern "C" {
-    #[doc = "MD5 context setup\n\n# Arguments\n\n* `ctx` - context to be initialized\n\n"]
-    pub fn md5_starts(ctx: *mut md5_context);
-}
-extern "C" {
-    #[doc = "MD5 process buffer\n\n# Arguments\n\n* `ctx` - MD5 context\n* `input` - buffer holding the data\n* `ilen` - length of the input data\n\n"]
-    pub fn md5_update(ctx: *mut md5_context, input: *const core::ffi::c_uchar, ilen: usize);
-}
-extern "C" {
-    #[doc = "MD5 final digest\n\n# Arguments\n\n* `ctx` - MD5 context\n* `output` - MD5 checksum result\n\n"]
-    pub fn md5_finish(ctx: *mut md5_context, output: *mut core::ffi::c_uchar);
-}
-extern "C" {
-    pub fn md5_process(ctx: *mut md5_context, data: *const core::ffi::c_uchar);
-}
-extern "C" {
-    #[doc = "Output = MD5( input buffer )\n\n# Arguments\n\n* `input` - buffer holding the data\n* `ilen` - length of the input data\n* `output` - MD5 checksum result\n\n"]
-    pub fn md5(input: *const core::ffi::c_uchar, ilen: usize, output: *mut core::ffi::c_uchar);
-}
 extern "C" {
     #[doc = "Generates detailed/random name based on furi_hal flags\n\n# Arguments\n\n* `name` - buffer to write random name\n* `max_name_size` - length of given buffer\n* `prefix` - [Direction: In] The prefix of the name\n\n"]
     pub fn name_generator_make_auto(
@@ -27590,81 +27531,6 @@ extern "C" {
         version: u8,
         payload_size: *mut usize,
     ) -> bool;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct sha256_context {
-    pub total: [u32; 2usize],
-    pub state: [u32; 8usize],
-    pub wbuf: [u32; 16usize],
-}
-#[test]
-fn bindgen_test_layout_sha256_context() {
-    const UNINIT: ::core::mem::MaybeUninit<sha256_context> = ::core::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::core::mem::size_of::<sha256_context>(),
-        104usize,
-        concat!("Size of: ", stringify!(sha256_context))
-    );
-    assert_eq!(
-        ::core::mem::align_of::<sha256_context>(),
-        4usize,
-        concat!("Alignment of ", stringify!(sha256_context))
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).total) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(sha256_context),
-            "::",
-            stringify!(total)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).state) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(sha256_context),
-            "::",
-            stringify!(state)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).wbuf) as usize - ptr as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(sha256_context),
-            "::",
-            stringify!(wbuf)
-        )
-    );
-}
-extern "C" {
-    pub fn sha256(
-        input: *const core::ffi::c_uchar,
-        ilen: core::ffi::c_uint,
-        output: *mut core::ffi::c_uchar,
-    );
-}
-extern "C" {
-    pub fn sha256_start(ctx: *mut sha256_context);
-}
-extern "C" {
-    pub fn sha256_finish(ctx: *mut sha256_context, output: *mut core::ffi::c_uchar);
-}
-extern "C" {
-    pub fn sha256_update(
-        ctx: *mut sha256_context,
-        input: *const core::ffi::c_uchar,
-        ilen: core::ffi::c_uint,
-    );
-}
-extern "C" {
-    pub fn sha256_process(ctx: *mut sha256_context);
 }
 extern "C" {
     #[doc = "Allocate a file stream with buffered read operations\n\nReturns:\n\n* Stream*\n\n"]
